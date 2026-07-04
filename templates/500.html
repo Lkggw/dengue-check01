@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Dengue Cases Analysis{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 50px 20px;">
+    <h1 style="font-size: 5em; color: #e74c3c;">500</h1>
+    <h2>Server Error</h2>
+    <p style="font-size: 1.2em; color: #666; margin: 20px 0;">Something went wrong on our end. Please try again later.</p>
+    <a href="{{ url_for('index') }}" class="btn" style="padding: 12px 25px; display: inline-block;">← Back to Dashboard</a>
+</div>
+{% endblock %}

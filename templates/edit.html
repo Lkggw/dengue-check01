@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Patient - Dengue Cases Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #f9f9f9;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: inherit;
+        transition: all 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 15px;
+        background: #95a5a6;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+
+    .btn-cancel:hover {
+        background: #7f8c8d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #f5c6cb;
+    }
+
+    h2 {
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+    .patient-info {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #3498db;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>✏️ Edit Patient Record</h2>
+    
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="patient-info">
+        <p><strong>Patient Name:</strong> {{ patient.name }}</p>
+        <p><strong>Current Age:</strong> {{ patient.age }}</p>
+        <p><strong>Added on:</strong> {{ patient.date_added }}</p>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="age">Age *</label>
+            <input type="text" id="age" name="age" required value="{{ patient.age }}" placeholder="Enter updated age">
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address *</label>
+            <textarea id="address" name="address" required placeholder="Enter updated address">{{ patient.address }}</textarea>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-submit">✓ Update Patient</button>
+            <a href="{{ url_for('index') }}" class="btn-cancel">✕ Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

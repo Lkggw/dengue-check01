@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Map - Dengue Cases Analysis{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+    #map {
+        height: 600px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .map-info {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .map-info h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .legend {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .legend-marker {
+        width: 30px;
+        height: 30px;
+        background: #e74c3c;
+        border-radius: 50%;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+
+    .no-data h3 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-info">
+    <h3>🗺️ Patient Locations Map</h3>
+    <p>Red markers show the locations of dengue patients based on their addresses.</p>
+</div>
+
+{% if patients %}
+<div id="map"></div>
+
+<div class="legend">
+    <h4>Legend</h4>
+    <div class="legend-item">
+        <div class="legend-marker">🦟</div>
+        <span>Dengue Patient Location</span>
+    </div>
+    <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+        <strong>Total Patients:</strong> {{ patients|length }}
+    </p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+    // Initialize map
+    const map = L.map('map').setView([20, 0], 2);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Patient data
+    const patients = {{ patients|tojson }};
+
+    // Add markers for each patient
+    patients.forEach(patient => {
+        const marker = L.marker([patient.address, patient.address])
+            .bindPopup(`
+                <div style="font-family: Arial, sans-serif;">
+                    <h4>${patient.name}</h4>
+                    <p><strong>Age:</strong> ${patient.age}</p>
+                    <p><strong>Address:</strong> ${patient.address}</p>
+                </div>
+            `)
+            .addTo(map);
+    });
+
+    // Fit map to bounds if there are patients
+    if (patients.length > 0) {
+        const bounds = L.latLngBounds();
+        patients.forEach(patient => {
+            bounds.extend([patient.address, patient.address]);
+        });
+        map.fitBounds(bounds);
+    }
+</script>
+{% else %}
+<div class="no-data">
+    <h3>No patient records to display</h3>
+    <p>Add some patients first to see them on the map.</p>
+    <a href="{{ url_for('add_record') }}" class="btn">Add Patient</a>
+</div>
+{% endif %}
+{% endblock %}
